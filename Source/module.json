@@ -1,15 +1,14 @@
 {
-	"name": "lazrius-foundry-template",
-	"title": "Lazrius' FoundryVTT Template",
+	"name": "lazrius-dice-stats",
+	"title": "Lazrius' Dice Stats",
 	"description": ".",
 	"version": "1.0.0",
 	"author": "Laz#9427",
 	"scripts": ["bundle.js"],
-	"styles": ["lazrius-foundry-template.css"],
+	"styles": ["lazrius-dice-stats.css"],
 	"languages": [],
-	"minimumCoreVersion": "0.8.8",
-	"compatibleCoreVersion": "0.8.8",
-	"url": "https://github.com/Lazrius/FoundryVTT-Typescript-Module-Template",
-	"manifest": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Typescript-Module-Template/master/Source/module.json",
-	"download": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Typescript-Module-Template/master/Package/lazrius-foundry-template-v1.0.0.zip"
+	"minimumCoreVersion": "9",
+	"url": "https://github.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats",
+	"manifest": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats/master/Source/module.json",
+	"download": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats/master/Package/lazrius-dice-stats-v1.0.0.zip"
 }
