@@ -1,0 +1,60 @@
+<form class="flexcol" autocomplete="off" name='dice-stats-config'>
+	<section class="content">
+		<div class="settings-list">
+			<h2 class="module-header">API Settings</h2>
+			<div class="form-group">
+				<label for='stats-apiUri'>API URI</label>
+				<div class="form-fields">
+					<input type='text' name='apiUri' id='stats-apiUri' value='{{this.apiUri}}'/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for='stats-apiSecret'>API Secret</label>
+				<div class="form-fields">
+					<input type='text' name='apiSecret' id='stats-apiSecret' value='{{this.apiSecret}}' placeholder='supersecret!!!!'/>
+					<span flow='left' ds-tooltip='Generate a new secret key.' style='flex: 0;'>
+						<button type='button'
+							onclick="(() => document.getElementById('stats-apiSecret').value = randomID() + randomID())()">
+							<i class='fas fa-key'></i>
+						</button>
+					</span>
+				</div>
+				<p class='ds-notes'>After generating a new secret, you must pass it into the API.</p>
+			</div>
+		</div>
+		<h2 class="module-header">Tracking Settings</h2>
+		<div class="form-group">
+			<label for='stats-debugMode'>Debug Mode</label>
+			<div class="form-fields">
+				<input type='checkbox' name='debug' id='stats-debugMode' value='{{this.debugMode}}'/>
+			</div>
+			<p class='ds-notes'>When enabled, any kind of action will cause a notification popup to trigger.</p>
+		</div>
+		<div class="form-group">
+			<label for='stats-alertOnError'>Alert On Error</label>
+			<div class="form-fields">
+				<input type='checkbox' name='alert' id='stats-alertOnError' value='{{this.alertOnError}}'/>
+			</div>
+			<p class='ds-notes'>When enabled, if a dice roll being added to the database fails, an alert will inform the DM.</p>
+		</div>
+	</section>
+
+	<footer class="sheet-footer flexrow">
+		<button type="button" onclick="((event) => {
+			try {
+				new window.URL(document.getElementById('stats-apiUri').value);
+				$('form[name=\'dice-stats-config\']').trigger('submit', function(e) {
+					e.preventDefault();
+				});
+			}
+			catch (e) {
+				console.error(e);
+				ui.notifications.error('Dice Stats: Api Uri is not a valid URI/URL.');
+				event.preventDefault();
+				event.stopPropagation();
+	        }
+		})(event)">
+			<i class="far fa-save"></i>Save Changes
+		</button>
+	</footer>
+</form>

@@ -95,5 +95,5 @@
   //"include": [
   //  "./Source/**/*.ts"
   //]
-  "exclude": ["gulpfile.ts"]
+  "exclude": ["gulpfile.ts", "FoundryVTT-Lazrius-Dice-Stats-Backend/*/**"]
 }

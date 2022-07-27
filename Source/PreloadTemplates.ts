@@ -1,12 +1,12 @@
 import Globals from "./Globals";
 
-const PreloadTemplates = async (): Promise<Handlebars.TemplateDelegate<any>[]> => {
-	const rootPath = `${Globals.IsModule ? "modules" : "systems"}/${Globals.ModuleName}/templates/`;
-	// Place relative paths in array below, e.g.:
-	// const templates = [ rootPath + "actor/actor-sheet.hbs" ]
-	// This would map to our local folder of /Assets/Templates/Actor/actor-sheet.hbs
-	const templates: Array<string> = [];
-	return loadTemplates(templates);
+export const TemplatePath = (): string => `${Globals.IsModule ? "modules" : "systems"}/${Globals.ModuleName}/templates/`;
+
+const PreloadTemplates = async (): Promise<Handlebars.TemplateDelegate[]> => {
+	const templates: Array<string> = [
+		"dice-stats-config.hbs"
+	];
+	return loadTemplates(templates.map(x => TemplatePath() + x));
 }
 
 export default PreloadTemplates;
