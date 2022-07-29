@@ -1,5 +1,5 @@
 import factory, {Axios, AxiosResponse} from "axios";
-import {HttpResponse} from "./Models/Responses";
+import {HttpResponse, SessionEnded, SessionStarted} from "./Models/Responses";
 import HttpStatusCode from "./Models/HttpStatusCode";
 import Logger from "./Utils/Logger";
 
@@ -13,6 +13,7 @@ const ReplaceUserId = (str: string, id: number) => str.replace('%userId%', id.to
 const ReplacePartyMemberId = (str: string, id: number) => str.replace('%partyMemberId%', id.toString());
 
 enum Requests {
+	GetCurrentSession = "/session",
 	SessionBegin = "/session/begin",
 	SessionEnd = "/session/end",
 	CreateUser = "/user/create?worldId=%worldId%",
@@ -42,6 +43,10 @@ export class WebClient {
 		timeout: 5000,
 		headers: { 'x-api-key': this.settings.secretKey }
 	});
+
+	private SetSettings(settings: WebClientSettings) {
+		this.settings = settings;
+	}
 
 	private static PreflightChecks(): WebClient {
 		if (WebClient.client === null)
@@ -81,7 +86,7 @@ export class WebClient {
 
 	public static Reinitialise(settings: WebClientSettings): void {
 		const client = this.PreflightChecks();
-		client.settings = settings;
+		client.SetSettings(settings);
 		client.axios = factory.create({
 			baseURL: client.settings.apiUrl.toString(),
 			headers: { 'x-api-key': client.settings.secretKey }
@@ -99,8 +104,37 @@ export class WebClient {
 		});
 	}
 
-	public static async BeginSession(): Promise<HttpResponse> {
+	public static GetCurrentSession(): Promise<{ activeSession: boolean, id: number, started: number }> {
 		const client = this.PreflightChecks();
-		return await client.Post(Requests.SessionBegin);
+		return client.Get(Requests.GetCurrentSession, HttpStatusCode.OK)
+		.then((res) => {
+			if ('started' in res) {
+				const session = res as SessionEnded;
+				return Promise.resolve({
+					activeSession: true,
+					id: session.id,
+					started: session.started
+				});
+			} else {
+				return Promise.resolve({
+					activeSession: false,
+					id: 0,
+					started: 0
+				});
+			}
+		})
+		.catch((err) => {
+			return Promise.reject(err);
+		});
+	}
+
+	public static async BeginSession(): Promise<SessionStarted> {
+		const client = this.PreflightChecks();
+		return client.Post(Requests.SessionBegin, HttpStatusCode.CREATED);
+	}
+
+	public static async EndSession(): Promise<SessionEnded> {
+		const client = this.PreflightChecks();
+		return client.Post(Requests.SessionEnd);
 	}
 }

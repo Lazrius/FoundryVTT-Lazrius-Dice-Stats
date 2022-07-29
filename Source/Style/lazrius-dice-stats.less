@@ -8,3 +8,33 @@ form .ds-notes {
     line-height: var(--line-height-16);
     color: var(--color-text-dark-secondary);
 }
+
+.ds-loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: var(--z-index-ui);
+}
+
+.ds-loader img {
+    height: 128px;
+    width: 128px;
+    opacity: 0.5;
+    border: none;
+    -webkit-animation: rotation 5s infinite linear;
+}
+
+.ds-centre-underline {
+    border-bottom: 2px solid var(--color-underline-header);
+    font-size: 5em;
+    width: 100%;
+    text-align: center;
+}
+
+.ds-subtitle {
+    font-size: 1.7em;
+    text-align: center;
+    padding-top: 10px;
+}
