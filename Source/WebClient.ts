@@ -1,16 +1,17 @@
 import factory, {Axios, AxiosResponse} from "axios";
-import {HttpResponse, SessionEnded, SessionStarted} from "./Models/Responses";
+import {AllUsersResponse, HttpResponse, SessionEnded, SessionStarted, WorldResponse} from "./Models/Responses";
 import HttpStatusCode from "./Models/HttpStatusCode";
 import Logger from "./Utils/Logger";
+import NewWorldRequest from "./Models/Requests/NewWorldRequest";
 
 export interface WebClientSettings {
 	apiUrl: URL;
 	secretKey: string;
 }
 
-const ReplaceWorldId = (str: string, id: number) => str.replace('%worldId%', id.toString());
-const ReplaceUserId = (str: string, id: number) => str.replace('%userId%', id.toString());
-const ReplacePartyMemberId = (str: string, id: number) => str.replace('%partyMemberId%', id.toString());
+const ReplaceWorldId = (str: string, id: string) => str.replace('%worldId%', id.toString());
+const ReplaceUserId = (str: string, id: string) => str.replace('%userId%', id.toString());
+const ReplacePartyMemberId = (str: string, id: string) => str.replace('%partyMemberId%', id.toString());
 
 enum Requests {
 	GetCurrentSession = "/session",
@@ -19,8 +20,10 @@ enum Requests {
 	CreateUser = "/user/create?worldId=%worldId%",
 	GetUserByWorldAndName = "/user?world=%worldId%&name=",
 	GetUserByWorldAndId = "/user?world=%worldId%&id=%userId%",
+	GetAllUsersInWorld = "/user/all?world=%worldId%",
 	CreateWorld = "/world/create",
-	RenameWorld = "/world/rename",
+	UpdateWorld = "/world/update",
+	GetWorld = "/world?world=%worldId%",
 	GetPartyMemberById = "/member?worldId=%worldId%&id=%partyMemberId%",
 	GetAllPartyMembers = "/member/all",
 	CreatePartyMember = "/member/create",
@@ -68,12 +71,16 @@ export class WebClient {
 
 	private static async HandleResponse<Response extends HttpResponse>(response: AxiosResponse, expectedCode: number): Promise<Response> {
 		if (response.status === HttpStatusCode.INTERNAL_SERVER_ERROR) {
+			Logger.Err('Dice-Stats API Internal Server Error');
+			console.error(response);
 			return Promise.reject(response.data);
 		}
 
 		const data = response.data as Response;
 		if (response.status !== expectedCode) {
-			return Promise.reject('Response was not expected code.\nMessage: ' + data.message);
+			Logger.Err('Response code was not expected. Was ' + response.status + ', Expected ' + expectedCode);
+			console.error(response);
+			return Promise.reject(data.message);
 		}
 
 		return Promise.resolve(data);
@@ -137,4 +144,27 @@ export class WebClient {
 		const client = this.PreflightChecks();
 		return client.Post(Requests.SessionEnd);
 	}
+
+	public static async GetAllUsers(worldId: string): Promise<AllUsersResponse> {
+		const client = this.PreflightChecks();
+		const url = ReplaceWorldId(Requests.GetAllUsersInWorld, worldId);
+		return client.Get(url);
+	}
+
+	public static async GetWorldInformation(worldId: string): Promise<WorldResponse> {
+		const client = this.PreflightChecks();
+		const url = ReplaceWorldId(Requests.GetWorld, worldId);
+		return client.Get(url)
+	}
+
+	private static async CreateOrUpdateWorld(req: NewWorldRequest, code: number, setup: boolean): Promise<WorldResponse> {
+		const client = this.PreflightChecks();
+		const url = setup ? Requests.CreateWorld : Requests.UpdateWorld;
+		return client.Post(url, req, code);
+	}
+
+	public static CreateWorld = async (req: NewWorldRequest): Promise<WorldResponse> =>
+		WebClient.CreateOrUpdateWorld(req, HttpStatusCode.CREATED, true);
+	public static UpdateWorld = async (req: NewWorldRequest): Promise<WorldResponse> =>
+		WebClient.CreateOrUpdateWorld(req, HttpStatusCode.OK,false);
 }

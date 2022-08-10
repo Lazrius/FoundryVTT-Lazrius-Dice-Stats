@@ -1,0 +1,1 @@
+export const GetWorldId = (): string => (game as Game).world.id;

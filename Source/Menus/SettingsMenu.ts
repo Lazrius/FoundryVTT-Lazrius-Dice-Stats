@@ -1,10 +1,19 @@
 import {TemplatePath} from "../PreloadTemplates";
 import {WebClient, WebClientSettings} from "../WebClient";
+import {WorldSetupMenu} from "./WorldSetupMenu";
 
 const settingsKey = "dice-stats";
 
 export const DebugMode = (): boolean => (game as Game).settings.get(settingsKey, "debug") as boolean;
 export const AlertOnFailure = (): boolean => (game as Game).settings.get(settingsKey, "alert") as boolean;
+export const CheckErrorForValidWorld = (err: string): boolean => {
+	if (err.includes('no valid world')) {
+		ui.notifications?.error('This world hsa not been setup with the Dice Stats backend API yet. Set it up in the settings menu.');
+		return true;
+	}
+
+	return false;
+}
 
 export const RegisterSettingsMenu = (): void => {
 	const g = game as Game;
@@ -44,6 +53,15 @@ export const RegisterSettingsMenu = (): void => {
 		icon: 'fas fa-dice-d20',
 		restricted: true,
 		type: DiceStatConfiguration
+	});
+
+	g.settings.registerMenu(settingsKey, 'lazrius-world-setup', {
+		name: 'Dice Stats World Setup',
+		label: 'World Setup',
+		hint: 'This is where you control ',
+		icon: 'fas fa-wrench',
+		restricted: true,
+		type: WorldSetupMenu
 	});
 
 	const settings: WebClientSettings = {
