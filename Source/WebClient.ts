@@ -1,8 +1,17 @@
 import factory, {Axios, AxiosResponse} from "axios";
-import {AllUsersResponse, HttpResponse, SessionEnded, SessionStarted, WorldResponse} from "./Models/Responses";
+import {
+	AllUsersResponse,
+	HttpResponse,
+	SessionEnded,
+	SessionStarted,
+	UserResponse,
+	WorldResponse
+} from "./Models/Responses";
 import HttpStatusCode from "./Models/HttpStatusCode";
 import Logger from "./Utils/Logger";
 import NewWorldRequest from "./Models/Requests/NewWorldRequest";
+import NewUserRequest from "./Models/Requests/NewUserRequest";
+import {GetWorldId} from "./Utils";
 
 export interface WebClientSettings {
 	apiUrl: URL;
@@ -17,14 +26,14 @@ enum Requests {
 	GetCurrentSession = "/session",
 	SessionBegin = "/session/begin",
 	SessionEnd = "/session/end",
-	CreateUser = "/user/create?worldId=%worldId%",
+	CreateUser = "/user/create?world=%worldId%",
 	GetUserByWorldAndName = "/user?world=%worldId%&name=",
 	GetUserByWorldAndId = "/user?world=%worldId%&id=%userId%",
 	GetAllUsersInWorld = "/user/all?world=%worldId%",
 	CreateWorld = "/world/create",
 	UpdateWorld = "/world/update",
 	GetWorld = "/world?world=%worldId%",
-	GetPartyMemberById = "/member?worldId=%worldId%&id=%partyMemberId%",
+	GetPartyMemberById = "/member?world=%worldId%&id=%partyMemberId%",
 	GetAllPartyMembers = "/member/all",
 	CreatePartyMember = "/member/create",
 	AddNewRoll = "/roll/add"
@@ -145,15 +154,21 @@ export class WebClient {
 		return client.Post(Requests.SessionEnd);
 	}
 
-	public static async GetAllUsers(worldId: string): Promise<AllUsersResponse> {
+	public static async GetAllUsers(): Promise<AllUsersResponse> {
 		const client = this.PreflightChecks();
-		const url = ReplaceWorldId(Requests.GetAllUsersInWorld, worldId);
+		const url = ReplaceWorldId(Requests.GetAllUsersInWorld, GetWorldId());
 		return client.Get(url);
 	}
 
-	public static async GetWorldInformation(worldId: string): Promise<WorldResponse> {
+	public static async CreateUser(req: NewUserRequest): Promise<UserResponse> {
 		const client = this.PreflightChecks();
-		const url = ReplaceWorldId(Requests.GetWorld, worldId);
+		const url = ReplaceWorldId(Requests.CreateUser, GetWorldId());
+		return client.Post(url, req, HttpStatusCode.CREATED);
+	}
+
+	public static async GetWorldInformation(): Promise<WorldResponse> {
+		const client = this.PreflightChecks();
+		const url = ReplaceWorldId(Requests.GetWorld, GetWorldId());
 		return client.Get(url)
 	}
 

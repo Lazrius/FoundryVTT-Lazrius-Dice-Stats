@@ -1,0 +1,35 @@
+<form autocomplete='off' onsubmit='event.preventDefault();'>
+	<div class='ds-loader' id='ds-loader-user-manager'>
+		<img src="icons/svg/clockwork.svg" alt='loading animation'>
+		<h3>Loading User Data</h3>
+	</div>
+
+	<div id='ds-form-user-manager' style='display: none'>
+		<fieldset>
+			<div class="form-group">
+				<label for='ds-user-select'>Select User</label>
+				<select id='ds-user-select' name="user" data-dtype="String">
+					<option disabled selected>Select User</option>
+					{{#each users}}
+						<option value="{{this.id}}">{{this.name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class='form-group'>
+				<label for='ds-user-name'>Name: </label>
+				<input id='ds-user-name' type='text' disabled/>
+			</div>
+			<div class='form-group'>
+				<label for='ds-user-id'>Id: </label>
+				<input id='ds-user-id' type='text' disabled/>
+			</div>
+			<div class='form-group'>
+				<label for='ds-user-isDm'>Is DM: </label>
+				<input id='ds-user-isDm' type='checkbox' disabled/>
+			</div>
+			<div class='form-group'>
+				<button type='button' id='ds-user-setup-button' disabled style='align-self: center'>Setup User</button>
+			</div>
+		</fieldset>
+	</div>
+</form>

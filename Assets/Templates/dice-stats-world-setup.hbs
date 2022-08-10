@@ -1,0 +1,30 @@
+<form autocomplete='off'>
+	<div class='ds-loader' id='ds-loader-world-setup'>
+		<img src="icons/svg/clockwork.svg" alt='loading animation'>
+		<h3>Loading World Data</h3>
+	</div>
+
+	<div id='ds-form-world-setup' style='display: none'>
+		<p class='ds-centre-underline' style='font-size: 3em;'>World Data</p>
+		<div class='form-group'>
+			<label for='ds-world-id'>World Id: </label>
+			<input id='ds-world-id' type='text' disabled value='{{this.worldId}}'/>
+		</div>
+		<div class='form-group'>
+			<label for='ds-world-name'>World Name: </label>
+			<input id='ds-world-name' type='text' disabled value='{{this.name}}'/>
+		</div>
+		<div class='form-group'>
+			<label for='ds-world-system'>World System: </label>
+			<input id='ds-world-system' type='text' disabled value='{{this.system}}'/>
+		</div>
+		<div class='form-group'>
+			<input type='submit' style='display: none;' name='setup'/>
+			<button type='button' id='ds-world-setup-button' disabled
+				onClick="$(this).prev().val('setup').trigger('click');">Setup World</button>
+			<input type='submit' style='display: none;' name='update'/>
+			<button type='button' id='ds-world-update-button' disabled
+				onClick="$(this).prev().val('update').trigger('click');">Update World</button>
+		</div>
+	</div>
+</form>

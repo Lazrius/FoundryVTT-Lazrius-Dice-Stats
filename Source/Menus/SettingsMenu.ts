@@ -1,6 +1,7 @@
 import {TemplatePath} from "../PreloadTemplates";
 import {WebClient, WebClientSettings} from "../WebClient";
 import {WorldSetupMenu} from "./WorldSetupMenu";
+import {ManageUsersMenu} from "./ManageUsersMenu";
 
 const settingsKey = "dice-stats";
 
@@ -62,6 +63,15 @@ export const RegisterSettingsMenu = (): void => {
 		icon: 'fas fa-wrench',
 		restricted: true,
 		type: WorldSetupMenu
+	});
+
+	g.settings.registerMenu(settingsKey, 'lazrius-user-management', {
+		name: 'Dice Stats User Setup',
+		label: 'User Setup',
+		hint: 'This is where you setup users for your game.',
+		icon: 'fas fa-users',
+		restricted: true,
+		type: ManageUsersMenu
 	});
 
 	const settings: WebClientSettings = {

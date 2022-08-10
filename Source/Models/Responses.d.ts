@@ -44,6 +44,16 @@ export interface UserResponse extends HttpResponse {
 	partyMembers: PartyMemberResponse[]
 }
 
+export interface AllUsersResponse extends HttpResponse {
+	users: {
+		id: string;
+		isDm: boolean;
+		created: number;
+		name: string;
+	}[];
+	world: WorldResponse;
+}
+
 export interface SessionEnded extends HttpResponse {
 	id: number;
 	started: number;

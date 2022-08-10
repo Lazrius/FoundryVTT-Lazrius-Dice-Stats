@@ -1,5 +1,6 @@
 import Globals from "../Globals";
 import {SessionDialog} from "../Controllers/SessionController";
+import {ManageUsersMenu} from "../Menus/ManageUsersMenu";
 
 export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 	const sessionController = {
@@ -17,6 +18,7 @@ export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 		title: "Manage Users",
 		visible: true,
 		button: true,
+		onClick: () => new ManageUsersMenu().render(true),
 	};
 
 	const managePartyMembers = {
@@ -25,6 +27,7 @@ export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 		title: "Manage Party Members",
 		visible: true,
 		button: true,
+		onClick: () => new ManageUsersMenu().render(true),
 	};
 
 	controls.push({

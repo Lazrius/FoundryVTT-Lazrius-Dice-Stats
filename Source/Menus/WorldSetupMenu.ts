@@ -1,5 +1,4 @@
 import {WebClient} from "../WebClient";
-import {GetWorldId} from "../Utils";
 import {AxiosError} from "axios";
 import HttpStatusCode from "../Models/HttpStatusCode";
 import {TemplatePath} from "../PreloadTemplates";
@@ -36,7 +35,7 @@ export class WorldSetupMenu extends FormApplication {
 	_render(force?: boolean, options?: Application.RenderOptions<FormApplicationOptions>): Promise<void> {
 		const res = super._render(force, options);
 
-		WebClient.GetWorldInformation(GetWorldId())
+		WebClient.GetWorldInformation()
 		.then(res => {
 			$('#ds-loader-world-setup').css('display', 'none');
 			$('#ds-form-world-setup').css('display', '');
