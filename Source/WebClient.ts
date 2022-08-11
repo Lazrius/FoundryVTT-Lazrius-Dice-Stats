@@ -1,7 +1,7 @@
 import factory, {Axios, AxiosResponse} from "axios";
 import {
 	AllUsersResponse,
-	HttpResponse, PartyMemberResponse,
+	HttpResponse,
 	SessionEnded,
 	SessionStarted, SimplePartyMember,
 	UserResponse,
@@ -13,10 +13,14 @@ import NewWorldRequest from "./Models/Requests/NewWorldRequest";
 import NewUserRequest from "./Models/Requests/NewUserRequest";
 import {GetWorldId} from "./Utils";
 import {NewPartyMemberRequest} from "./Models/Requests/NewPartyMemberRequest";
+import {DebugMode, UpdateWebClient} from "./Menus/SettingsMenu";
+import NewRollRequest from "./Models/Requests/NewRollRequest";
 
 export interface WebClientSettings {
 	apiUrl: URL;
 	secretKey: string;
+	sessionActive: boolean;
+	connectionSuccessful: boolean;
 }
 
 const ReplaceWorldId = (str: string, id: string) => str.replace('%worldId%', id.toString());
@@ -43,12 +47,15 @@ enum Requests {
 export class WebClient {
 	private constructor() {
 		WebClient.client = this;
+		UpdateWebClient(false);
 	}
 
 	private static client: WebClient | null = null;
 	private settings: WebClientSettings = {
-		apiUrl: new URL('localhost:3000'),
-		secretKey: ''
+		apiUrl: new URL('http://localhost:3000'),
+		secretKey: '',
+		sessionActive: false,
+		connectionSuccessful: false,
 	};
 
 	private axios: Axios = factory.create({
@@ -101,7 +108,7 @@ export class WebClient {
 		return client.settings;
 	}
 
-	public static Reinitialise(settings: WebClientSettings): void {
+	public static Reinitialise(settings: WebClientSettings, alert: boolean): void {
 		const client = this.PreflightChecks();
 		client.SetSettings(settings);
 		client.axios = factory.create({
@@ -112,10 +119,13 @@ export class WebClient {
 		// Test connection
 		factory.get(settings.apiUrl.toString(), { headers: { 'x-api-key': client.settings.secretKey } })
 		.then(() => {
-			ui.notifications?.info('Dice Stats: Connection test successful');
+			if (alert)
+				ui.notifications?.info('Dice Stats: Connection test successful');
+			client.SetSettings({ ...settings, connectionSuccessful: true });
 		})
 		.catch((err: Error) => {
-			ui.notifications?.error('Dice Stats: Connection Test Failed. See console (F12) for more information');
+			if (alert)
+				ui.notifications?.error('Dice Stats: Connection Test Failed. See console (F12) for more information');
 			Logger.Err('Err while testing connection.');
 			console.error(err);
 		});
@@ -125,14 +135,23 @@ export class WebClient {
 		const client = this.PreflightChecks();
 		return client.Get(Requests.GetCurrentSession, HttpStatusCode.OK)
 		.then((res) => {
-			if ('started' in res) {
+			const activeSession = 'started' in res;
+			if (DebugMode()) {
+				Logger.Ok('Session Currently ' + (activeSession ? 'Active' : 'Inactive'));
+				ui.notifications?.info('Dice Stats: Session Currently ' + (activeSession ? 'Active' : 'Inactive'));
+			}
+			if (activeSession) {
 				const session = res as SessionEnded;
+				this.SetSessionState(true);
+
 				return Promise.resolve({
 					activeSession: true,
 					id: session.id,
 					started: session.started
 				});
 			} else {
+				this.SetSessionState(false);
+
 				return Promise.resolve({
 					activeSession: false,
 					id: 0,
@@ -145,9 +164,14 @@ export class WebClient {
 		});
 	}
 
+	public static SetSessionState(active: boolean): void {
+		const client = this.PreflightChecks();
+		client.SetSettings({ ...this.GetCurrentSettings(), sessionActive: active });
+	}
+
 	public static async BeginSession(): Promise<SessionStarted> {
 		const client = this.PreflightChecks();
-		return client.Post(Requests.SessionBegin, HttpStatusCode.CREATED);
+		return client.Post(Requests.SessionBegin, undefined, HttpStatusCode.CREATED);
 	}
 
 	public static async EndSession(): Promise<SessionEnded> {
@@ -187,6 +211,12 @@ export class WebClient {
 	public static CreatePartyMember = async (req: NewPartyMemberRequest): Promise<SimplePartyMember> => {
 		const client = this.PreflightChecks();
 		const url = Requests.CreatePartyMember;
+		return client.Post(url, req, HttpStatusCode.CREATED);
+	}
+
+	public static CreateRoll = async (req: NewRollRequest): Promise<HttpResponse> => {
+		const client = this.PreflightChecks();
+		const url = Requests.AddNewRoll;
 		return client.Post(url, req, HttpStatusCode.CREATED);
 	}
 }

@@ -88,6 +88,7 @@ const StartSession = () => {
 	WebClient.BeginSession()
 		.then((res) => {
 			ui.notifications?.info('Dice Stats: ' + res.message);
+			WebClient.SetSessionState(true);
 		})
 		.catch((err) => {
 			if (AlertOnFailure()) {
@@ -96,6 +97,7 @@ const StartSession = () => {
 
 			Logger.Err('Unable to start session.');
 			console.error(err);
+			WebClient.SetSessionState(false);
 		});
 }
 
@@ -103,12 +105,14 @@ const StopSession = () => {
 	WebClient.EndSession()
 		.then((res) => {
 			ui.notifications?.info('Dice Stats: ' + res.message);
+			WebClient.SetSessionState(false);
 		})
 		.catch((err) => {
 			if (AlertOnFailure()) {
 				ui.notifications?.error('Dice Stats: Unable to end session. See console for errors.');
 			}
 
+			WebClient.SetSessionState(true);
 			Logger.Err('Unable to end session.');
 			console.error(err);
 		});

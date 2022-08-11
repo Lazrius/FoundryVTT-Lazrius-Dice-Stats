@@ -26,16 +26,30 @@
 		<div class="form-group">
 			<label for='stats-debugMode'>Debug Mode</label>
 			<div class="form-fields">
-				<input type='checkbox' name='debug' id='stats-debugMode' checked='{{this.debugMode}}'/>
+				<input type='checkbox' name='debug' id='stats-debugMode' {{#if this.debugMode}}checked{{/if}}/>
 			</div>
 			<p class='ds-notes'>When enabled, any kind of action will cause a notification popup to trigger.</p>
 		</div>
 		<div class="form-group">
 			<label for='stats-alertOnError'>Alert On Error</label>
 			<div class="form-fields">
-				<input type='checkbox' name='alert' id='stats-alertOnError' checked='{{this.alertOnError}}'/>
+				<input type='checkbox' name='alert' id='stats-alertOnError' {{#if this.alert}}checked{{/if}}/>
 			</div>
 			<p class='ds-notes'>When enabled, if a dice roll being added to the database fails, an alert will inform the DM.</p>
+		</div>
+		<div class="form-group">
+			<label for='stats-addLayerHotbar'>Enable Layer Hotbar</label>
+			<div class="form-fields">
+				<input type='checkbox' name='addLayerHotbar' id='stats-addLayerHotbar' {{#if this.addLayerHotbar}}checked{{/if}}/>
+			</div>
+			<p class='ds-notes'>When enabled, adds a layer control with quick access to the various dice stats control</p>
+		</div>
+		<div class="form-group">
+			<label for='stats-requireFlavourText'>Require Flavour Text</label>
+			<div class="form-fields">
+				<input type='checkbox' name='requireFlavourText' id='stats-requireFlavourText' {{#if this.requireFlavourText}}checked{{/if}}/>
+			</div>
+			<p class='ds-notes'>When enabled, dice rolls are only recorded if they have flavour text. (e.g. 'Acrobatics Skill Check')</p>
 		</div>
 	</section>
 

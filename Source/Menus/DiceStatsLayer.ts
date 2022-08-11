@@ -1,3 +1,6 @@
+import {AddLayerHotbar} from "./SettingsMenu";
+import Logger from "../Utils/Logger";
+
 class DiceStatsLayer extends CanvasLayer {
     constructor() {
         super();
@@ -27,6 +30,11 @@ class DiceStatsLayer extends CanvasLayer {
 }
 
 export const RegisterLayer = (): void => {
+	if (!AddLayerHotbar()) {
+		Logger.Warn('Suppressing creating dice layer - disabled in config.');
+		return;
+	}
+
     const layers = {
         "dice-stats": {
             layerClass: DiceStatsLayer,

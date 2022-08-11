@@ -8,6 +8,9 @@ const settingsKey = "dice-stats";
 
 export const DebugMode = (): boolean => (game as Game).settings.get(settingsKey, "debug") as boolean;
 export const AlertOnFailure = (): boolean => (game as Game).settings.get(settingsKey, "alert") as boolean;
+export const AddLayerHotbar = (): boolean => (game as Game).settings.get(settingsKey, "addLayerHotbar") as boolean;
+export const RequireFlavourText = (): boolean => (game as Game).settings.get(settingsKey, "requireFlavourText") as boolean;
+
 export const CheckErrorForValidWorld = (err: string): boolean => {
 	if (err.includes('no valid world')) {
 		ui.notifications?.error('This world hsa not been setup with the Dice Stats backend API yet. Set it up in the settings menu.');
@@ -15,6 +18,16 @@ export const CheckErrorForValidWorld = (err: string): boolean => {
 	}
 
 	return false;
+}
+
+export const UpdateWebClient = (alert: boolean): void => {
+	const settings: WebClientSettings = {
+		secretKey: (game as Game).settings.get(settingsKey, 'apiSecret') as string,
+		apiUrl: new URL((game as Game).settings.get(settingsKey, 'apiUri') as string),
+		sessionActive: false,
+		connectionSuccessful: false,
+	};
+	WebClient.Reinitialise(settings, alert || DebugMode());
 }
 
 export const RegisterSettingsMenu = (): void => {
@@ -46,6 +59,20 @@ export const RegisterSettingsMenu = (): void => {
 		config: false,
 		type: String,
 		default: ''
+	});
+
+	g.settings.register(settingsKey, 'addLayerHotbar', {
+		scope: "client",
+		config: false,
+		type: Boolean,
+		default: true
+	});
+
+	g.settings.register(settingsKey, 'requireFlavourText', {
+		scope: "client",
+		config: false,
+		type: Boolean,
+		default: false
 	});
 
 	g.settings.registerMenu(settingsKey, 'lazrius-dice-stats', {
@@ -84,11 +111,7 @@ export const RegisterSettingsMenu = (): void => {
 		type: ManagePartyMembersMenu
 	});
 
-	const settings: WebClientSettings = {
-		secretKey: g.settings.get(settingsKey, 'apiSecret') as string,
-		apiUrl: new URL(g.settings.get(settingsKey, 'apiUri') as string)
-	};
-	WebClient.Reinitialise(settings);
+	UpdateWebClient(false);
 };
 
 class DiceStatConfiguration extends FormApplication {
@@ -103,6 +126,8 @@ class DiceStatConfiguration extends FormApplication {
 		data.apiSecret = (game as Game).settings.get(settingsKey, 'apiSecret');
 		data.debugMode = (game as Game).settings.get(settingsKey, 'debug') as boolean || false;
 		data.alertOnError = (game as Game).settings.get(settingsKey, 'alert') as boolean || false;
+		data.addLayerHotbar = (game as Game).settings.get(settingsKey, 'addLayerHotbar') as boolean || false;
+		data.requireFlavourText = (game as Game).settings.get(settingsKey, 'requireFlavourText') as boolean || false;
 
 		return data;
 	}
@@ -111,21 +136,11 @@ class DiceStatConfiguration extends FormApplication {
 		if (!formData)
 			return Promise.reject();
 
-		Object.entries(formData).forEach(([key, value]) => {
-			// Get the old setting value
-			const oldValue: any = (game as Game).settings.get(settingsKey, key);
+		for (const key of Object.keys(formData)) {
+			(game as Game).settings.set(settingsKey, key, formData[key]);
+		}
 
-			// Only update the setting if it has been changed (this leaves the default in place if it hasn't been touched)
-			if (value !== oldValue) {
-				(game as Game).settings.set(settingsKey, key, value);
-			}
-		});
-
-		const settings: WebClientSettings = {
-			secretKey: formData['apiSecret'] as string,
-			apiUrl: new URL(formData['apiUri'] as string)
-		};
-		WebClient.Reinitialise(settings);
+		UpdateWebClient(true);
 		return Promise.resolve();
 	}
 
