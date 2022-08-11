@@ -1,6 +1,8 @@
 import Globals from "../Globals";
 import {SessionDialog} from "../Controllers/SessionController";
 import {ManageUsersMenu} from "../Menus/ManageUsersMenu";
+import {ManagePartyMembersMenu} from "../Menus/ManagePartyMembersMenu";
+import {WorldSetupMenu} from "../Menus/WorldSetupMenu";
 
 export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 	const sessionController = {
@@ -11,6 +13,15 @@ export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 		visible: true,
 		button: true,
 	};
+
+	const manageWorld = {
+		icon: "fas fa-globe",
+		name: "ds-world-controller",
+		title: "Manage World",
+		visible: true,
+		button: true,
+		onClick: () => new WorldSetupMenu().render(true),
+	}
 
 	const manageUsers = {
 		icon: "fas fa-users",
@@ -27,7 +38,7 @@ export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 		title: "Manage Party Members",
 		visible: true,
 		button: true,
-		onClick: () => new ManageUsersMenu().render(true),
+		onClick: () => new ManagePartyMembersMenu().render(true),
 	};
 
 	controls.push({
@@ -39,6 +50,7 @@ export const GetSceneControlButtons = (controls: SceneControl[]): void => {
 		activeTool: "ds-session-controller",
 		tools: [
 			sessionController,
+			manageWorld,
 			manageUsers,
 			managePartyMembers
 		]

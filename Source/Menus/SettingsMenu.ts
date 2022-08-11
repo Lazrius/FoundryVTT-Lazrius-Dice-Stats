@@ -2,6 +2,7 @@ import {TemplatePath} from "../PreloadTemplates";
 import {WebClient, WebClientSettings} from "../WebClient";
 import {WorldSetupMenu} from "./WorldSetupMenu";
 import {ManageUsersMenu} from "./ManageUsersMenu";
+import {ManagePartyMembersMenu} from "./ManagePartyMembersMenu";
 
 const settingsKey = "dice-stats";
 
@@ -72,6 +73,15 @@ export const RegisterSettingsMenu = (): void => {
 		icon: 'fas fa-users',
 		restricted: true,
 		type: ManageUsersMenu
+	});
+
+	g.settings.registerMenu(settingsKey, 'lazrius-member-management', {
+		name: 'Dice Stats Party Member Setup',
+		label: 'Member Setup',
+		hint: 'This is where you assign party members to your users.',
+		icon: 'fas fa-address-card',
+		restricted: true,
+		type: ManagePartyMembersMenu
 	});
 
 	const settings: WebClientSettings = {

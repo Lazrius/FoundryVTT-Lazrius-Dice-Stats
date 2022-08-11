@@ -40,7 +40,6 @@ export class ManageUsersMenu extends FormApplication {
 
 		WebClient.GetAllUsers()
 		.then((res) => {
-			res.users
 			res.users.forEach(x => {
 				if (this.userMap.has(x.id)) {
 					this.userMap.set(x.id, x);
@@ -129,7 +128,7 @@ export class ManageUsersMenu extends FormApplication {
 		options.closeOnSubmit = false;
 		options.popOut = true;
 		options.width = 600;
-		options.height = "auto";
+		options.height = 250;
 		return options;
 	}
 }

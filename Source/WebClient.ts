@@ -1,9 +1,9 @@
 import factory, {Axios, AxiosResponse} from "axios";
 import {
 	AllUsersResponse,
-	HttpResponse,
+	HttpResponse, PartyMemberResponse,
 	SessionEnded,
-	SessionStarted,
+	SessionStarted, SimplePartyMember,
 	UserResponse,
 	WorldResponse
 } from "./Models/Responses";
@@ -12,6 +12,7 @@ import Logger from "./Utils/Logger";
 import NewWorldRequest from "./Models/Requests/NewWorldRequest";
 import NewUserRequest from "./Models/Requests/NewUserRequest";
 import {GetWorldId} from "./Utils";
+import {NewPartyMemberRequest} from "./Models/Requests/NewPartyMemberRequest";
 
 export interface WebClientSettings {
 	apiUrl: URL;
@@ -182,4 +183,10 @@ export class WebClient {
 		WebClient.CreateOrUpdateWorld(req, HttpStatusCode.CREATED, true);
 	public static UpdateWorld = async (req: NewWorldRequest): Promise<WorldResponse> =>
 		WebClient.CreateOrUpdateWorld(req, HttpStatusCode.OK,false);
+
+	public static CreatePartyMember = async (req: NewPartyMemberRequest): Promise<SimplePartyMember> => {
+		const client = this.PreflightChecks();
+		const url = Requests.CreatePartyMember;
+		return client.Post(url, req, HttpStatusCode.CREATED);
+	}
 }

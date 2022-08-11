@@ -2,7 +2,7 @@ export interface HttpResponse {
 		message?: string;
 	}
 
-export interface SimplePartyMember {
+export interface SimplePartyMember extends HttpResponse {
 	id: string,
 	userId: string,
 	name: string,
@@ -45,12 +45,7 @@ export interface UserResponse extends HttpResponse {
 }
 
 export interface AllUsersResponse extends HttpResponse {
-	users: {
-		id: string;
-		isDm: boolean;
-		created: number;
-		name: string;
-	}[];
+	users: UserResponse[];
 	world: WorldResponse;
 }
 

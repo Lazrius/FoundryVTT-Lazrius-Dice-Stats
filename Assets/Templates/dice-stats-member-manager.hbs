@@ -7,11 +7,11 @@
 	<div id='ds-form-member-manager' style='display: none'>
 		<fieldset>
 			<div class="form-group">
-				<label for='user'>Select User</label>
-				<select id='user' name="user" data-dtype="String">
+				<label for='ds-member-select-user'>Select User</label>
+				<select id='ds-member-select-user' name="user" data-dtype="String">
 					<option disabled selected value>Select User</option>
 					{{#each users}}
-						<option value="{{this.id}}">{{this.name}}</option>
+						<option value="{{this.id}}" data-ds-id="{{this.id}}">{{this.name}}</option>
 					{{/each}}
 				</select>
 			</div>
@@ -20,13 +20,17 @@
 				<label class='ds-subtitle'>Select Character</label>
 			</div>
 			<div class="form-group ds-characters">
-				{{#each actors}}
-					<div class="ds-characters" data-id="{{this.id}}">
+				{{#each characters}}
+					<div class="ds-characters ds-character-flex" id='ds-character-{{this.id}}' data-ds-name='{{this.name}}'
+						data-ds-id='{{this.id}}' style='display: none'>
 						<!--suppress HtmlFormInputWithoutLabel -->
-						<input type="radio" name="{{this.id}}" id="{{this.id}}" data-dtype="Boolean"/>
-						<span flow='left' ds-tooltip='{{this.name}}'><img src="{{this.img}}" /></span>
+						<input type="radio" name="ds-characters" data-dtype="Boolean"/>
+						<span flow='left' ds-tooltip='{{this.name}}'><img src="{{this.img}}"  alt='{{this.name}}'/></span>
 					</div>
 				{{/each}}
+			</div>
+			<div class='form-group'>
+				<button type='button' id='ds-member-setup-character' disabled>Setup Character</button>
 			</div>
 		</fieldset>
 	</div>
