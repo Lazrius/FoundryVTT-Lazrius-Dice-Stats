@@ -5,10 +5,12 @@
 	"version": "1.0.0",
 	"author": "Laz#9427",
 	"scripts": ["bundle.js"],
-	"styles": ["lazrius-dice-stats.css"],
+	"styles": [
+		"lazrius-dice-stats.css"
+	],
 	"languages": [],
 	"minimumCoreVersion": "9",
 	"url": "https://github.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats",
 	"manifest": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats/master/Source/module.json",
-	"download": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats/master/Package/lazrius-dice-stats-v1.0.0.zip"
+	"download": "https://raw.githubusercontent.com/Lazrius/FoundryVTT-Lazrius-Dice-Stats/v1.0.0/dist/lazrius-dice-stats-v1.0.0.zip"
 }
